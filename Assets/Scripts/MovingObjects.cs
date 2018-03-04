@@ -9,8 +9,16 @@ public class MovingObjects : MonoBehaviour {
 	public GameObject[] moveRangeInstances;
 	public int speed;
 
+	public int MovePoints = 5;
+	public int hp = 31;
+	public int attack = 10;
+	public int defense = 5;
+
 	protected bool hasMoved = false;
+	protected bool hasAttacked = false;
+
 	protected bool turnFinished = false;
+	protected bool isDead = false;
 	protected List<Vector3> moveRanges = new List<Vector3> ();
 	protected List<Vector3> bestPath = new List<Vector3> ();
 	protected int[] bestPathArray;
@@ -22,7 +30,7 @@ public class MovingObjects : MonoBehaviour {
 	// Use this for initialization
 
 	protected void Start () {
-		Update ();
+		
 	}
 
 	private bool IsHinder(Vector3 pos){
@@ -46,7 +54,15 @@ public class MovingObjects : MonoBehaviour {
 		}
 	}
 
-	public void setMoveRange(float xpos, float ypos, int MovePoints){
+	private void initBestPathArray(int Count){
+		bestPathArray = new int[moveRanges.Count];
+
+		for (int i = 0; i < moveRanges.Count; i++) {
+			bestPathArray [i] = 0;
+		}
+	}
+		
+	public void setMoveRange(float xpos, float ypos){
 
 		Vector3 newPos1,newPos2;
 		moveRanges.Clear ();
@@ -77,11 +93,7 @@ public class MovingObjects : MonoBehaviour {
 
 		//print (moveRanges.IndexOf(new Vector3(1.5f,1.5f,-0.5f)));	
 		initPathArray(moveRanges.Count);
-		bestPathArray = new int[moveRanges.Count];
-
-		for (int i = 0; i < moveRanges.Count; i++) {
-			bestPathArray [i] = 0;
-		}
+		initBestPathArray (moveRanges.Count);
 
 		for (int i = 0; i < moveRanges.Count; i++) {
 			PathArray [i,i] = 0;
@@ -129,7 +141,6 @@ public class MovingObjects : MonoBehaviour {
 		}
 
 		for (int i = 0; i < moveRanges.Count; i++) {
-			//print (dis [i]);
 			if (dis [i] > MovePoints) {
 				moveRanges[i] = new Vector3(xpos,ypos,-0.5f);
 			}
@@ -164,6 +175,7 @@ public class MovingObjects : MonoBehaviour {
 
 		}
 	}
+
 
 	// Update is called once per frame
 	void Update () {

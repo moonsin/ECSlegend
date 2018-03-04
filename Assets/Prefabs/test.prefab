@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 212561997496476554}
   - component: {fileID: 61925149236562918}
   - component: {fileID: 114486998190119524}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: test
   m_TagString: MoveRanges
   m_Icon: {fileID: 0}

@@ -119,10 +119,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveTime: 0.1
   moveRangeInstances: []
-  movePoints: 3
   speed: 6
-  test:
+  MovePoints: 5
+  hp: 31
+  attack: 10
+  defense: 5
+  moveRangeTiles:
   - {fileID: 1224064817818560, guid: 91b0477fe8d9e495cb0f9c14e1a1d8e6, type: 2}
+  attackRangeTiles:
+  - {fileID: 1170316032113410, guid: 272dc655d08284198841fba6c62164af, type: 2}
+  occupation: 2
+  attackPower: 1
 --- !u!212 &212115462710732726
 SpriteRenderer:
   m_ObjectHideFlags: 1

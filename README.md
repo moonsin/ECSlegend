@@ -1,2 +1,0 @@
-# ECSlegend
-A game
