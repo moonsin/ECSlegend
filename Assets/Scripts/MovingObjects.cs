@@ -7,17 +7,18 @@ public class MovingObjects : MonoBehaviour {
 
 	public float moveTime = 0.1f;
 	public GameObject[] moveRangeInstances;
+	public GameObject[] attackRangeInstances;
 	public int speed;
 
-	public int MovePoints = 5;
-	public int hp = 31;
-	public int attack = 10;
-	public int defense = 5;
+	public int MovePoints;
+	public int hp;
+	public int attack;
+	public int defense;
 
-	protected bool hasMoved = false;
-	protected bool hasAttacked = false;
+	public bool hasMoved = false;
+	public bool hasAttacked = false;
 
-	protected bool turnFinished = false;
+	public bool turnFinished = false;
 	protected bool isDead = false;
 	protected List<Vector3> moveRanges = new List<Vector3> ();
 	protected List<Vector3> bestPath = new List<Vector3> ();
@@ -25,12 +26,28 @@ public class MovingObjects : MonoBehaviour {
 	protected GameObject movingObj;
 	protected string movingPlayer;
 	protected int[,] PathArray;
-	private int[] dis;
+	protected int[] dis;
+	protected int movingToNum;
+	protected bool moveFinished = false;
+	protected bool alreadyMoving = false;
 
 	// Use this for initialization
 
 	protected void Start () {
 		
+	}
+
+	public void loseHp(int hurt){
+		int originHp = hp;
+		hp -= hurt;
+	}
+
+	public int GetDefend(){
+		return defense;
+	}
+
+	public int GetHp(){
+		return hp;
 	}
 
 	private bool IsHinder(Vector3 pos){
@@ -91,7 +108,7 @@ public class MovingObjects : MonoBehaviour {
 			}
 		}
 
-		//print (moveRanges.IndexOf(new Vector3(1.5f,1.5f,-0.5f)));	
+
 		initPathArray(moveRanges.Count);
 		initBestPathArray (moveRanges.Count);
 
@@ -157,7 +174,7 @@ public class MovingObjects : MonoBehaviour {
 	}
 
 	protected void setBestPath(Vector3 newPos){
-		
+		bestPath = new List<Vector3> ();
 		int targetIndex = moveRanges.IndexOf (newPos);
 		bestPath.Add (newPos);
 	
@@ -176,6 +193,25 @@ public class MovingObjects : MonoBehaviour {
 		}
 	}
 
+	public bool GetTurnFinish(){
+		return turnFinished;
+	}
+
+	protected void attackObject(Enemy obj){
+		int hurt = attack - obj.defense > 0 ? attack - obj.defense : 0;
+		obj.hp -= hurt;
+		if (obj.hp <= 0) {
+			obj.isDead = true;
+		}
+	}
+
+	protected void attackPlayer(Player obj){
+		int hurt = attack - obj.defense > 0 ? attack - obj.defense : 0;
+		obj.hp -= hurt;
+		if (obj.hp <= 0) {
+			obj.isDead = true;
+		}
+	}
 
 	// Update is called once per frame
 	void Update () {

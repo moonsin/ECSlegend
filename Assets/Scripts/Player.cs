@@ -16,13 +16,14 @@ public class Player : MovingObjects {
 	private Vector3 clickPos;
 	public int attackPower = 1;
 
-	private bool alreadyMoving = false;
 	private Vector3 newPos;
-	private int movingToNum;
 
 	public static Player controllingPlayer = null;
-	private static bool moving = false;
-	private static bool attacking = false;
+	public static string buttonChoice = null;
+	private bool playerBusy = false;
+	private bool moving = false;
+	private bool attacking = false;
+
 
 	public class AdjustPosition{
 		public float x;
@@ -58,10 +59,22 @@ public class Player : MovingObjects {
 		foreach (GameObject element in moveRangeInstances) {
 			Destroy (element);
 		}
-		//moveRanges.Clear ();
 		moving = false;
-		controllingPlayer = null;
+		//moveRanges.Clear ();
+
 	}
+	void deleteAttackRange(){
+		attackRangeInstances = GameObject.FindGameObjectsWithTag ("attackRange");
+		Thread.Sleep (50);
+		foreach (GameObject element in attackRangeInstances) {
+			Destroy (element);
+		}
+		attacking = false;
+		//moveRanges.Clear ();
+
+	}
+
+
 	void setNewInstance(Vector3 pos,Transform range, GameObject[] tiles){
 		GameObject toInstantiate = tiles [Random.Range (0, tiles.Length)];
 
@@ -102,10 +115,24 @@ public class Player : MovingObjects {
 			return ( h.name == "test(Clone)");
 	}
 
+	private bool IsMouseOnAttackRange(Vector3 mousePos){
+		Collider2D h = Physics2D.OverlapPoint (mousePos);
+		if (h == null) {
+			return false;
+		} else {
+			return(h.name == "attackRange(Clone)");
+		}
+	}
 
+	private bool isInEnemy(Vector3 mousePos){
+		Collider2D h = Physics2D.OverlapPoint (mousePos);
 
-	public bool GetTurnFinish(){
-		return turnFinished;
+		if (h != null) {
+			if (h.tag == "Enemy") {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	void showAttackRange(){
@@ -166,36 +193,88 @@ public class Player : MovingObjects {
 	void Update () {
 		clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-		if (moving == true && controllingPlayer != this) {
-			return;
-		} else if (moving == false || controllingPlayer == this ) {
-			
-
+		if (playerBusy == false) {
+			if (turnFinished == true) {
+				return;
+			}
 			if (Input.GetMouseButtonUp (0) && IsMouseOnPlayer (clickPos)) {
-				if (hasMoved && !hasAttacked) {
-					if (!attacking) {
-						showAttackRange ();
-					} else {
-					}
+				controllingPlayer = this;
+				playerBusy = true;
+				GameManager.instance.ShowPlayerMenu (this);
+			} else {
+				return;
+			}
+		} else if (playerBusy == true && controllingPlayer == this) {
+			
+			if (Input.GetMouseButtonUp (0) && IsMouseOnPlayer (clickPos)) {
+				if (moving) {
+					deleteMoveRange ();
+					GameManager.instance.ShowPlayerMenu (this);
+				}
+				if (attacking) {
+					deleteAttackRange ();
+					GameManager.instance.ShowPlayerMenu (this);
 				} else {
-					if (!moving) {
-						showRange ();
-					} else {
-						deleteMoveRange ();
-					}
+					GameManager.instance.HidePlayerMenu ();
+					playerBusy = false;
+					controllingPlayer = null;
 				}
 			} else if (Input.GetMouseButtonUp (0) && IsMouseOnMoveRange (clickPos)) {
 				newPos = dirPos (clickPos);
 				alreadyMoving = true;
+				moveFinished = false;
 				setBestPath (newPos);
 				movingToNum = bestPath.Count - 1;
+				moveRanges.Clear ();
 
-
-			} else if (Input.GetMouseButtonUp (0)) {
-				deleteMoveRange ();
+			} else if (Input.GetMouseButtonUp (0) && IsMouseOnAttackRange (clickPos)){
+				deleteAttackRange ();
+				if (isInEnemy (clickPos)) {
+					Collider2D h = Physics2D.OverlapPoint (clickPos);
+					Enemy target = new Enemy ();
+					for (int i = 0; i < GameManager.instance.enemies.Count; i++) {
+						if (h.name == GameManager.instance.enemies [i].name) {
+							target = GameManager.instance.enemies [i];
+							break;
+						}
+					}
+					attackObject (target);
+					hasAttacked = true;
+				}
+			}else if (Input.GetMouseButtonUp (0)) {
+				if (moving) {
+					deleteMoveRange ();
+					controllingPlayer = null;
+				}
+				if (attacking) {
+					deleteAttackRange ();
+					controllingPlayer = null;
+				} else {
+					GameManager.instance.HidePlayerMenu ();
+					if (buttonChoice != null) {
+						if (buttonChoice == "move" && hasMoved == false) {
+							showRange ();
+							buttonChoice = null;
+						} else if (buttonChoice == "attack" && hasAttacked == false) {
+							showAttackRange ();
+							buttonChoice = null;
+						} else if (buttonChoice == "rest") {
+							turnFinished = true;
+							controllingPlayer = null;
+							playerBusy = false;
+							buttonChoice = null;
+						} 
+					} else {
+						playerBusy = false;
+						controllingPlayer = null;
+					}
+				}
 			}
 		} 
 
+
+
+	if(newPos!=new Vector3(-1000f,-1000f,-1000f)){
 		for (int i = bestPath.Count-1; i >=0 ; i--) {
 			if (Vector3.Distance (this.transform.position, bestPath [i]) >= 0.01 && movingToNum == i) {
 				move (alreadyMoving, bestPath [i]);
@@ -204,12 +283,24 @@ public class Player : MovingObjects {
 			}
 		}
 
-		if (Vector3.Distance (this.transform.position, newPos) <= 0.01) {
+		if (Vector3.Distance (this.transform.position, newPos) <= 0.01 && !moveFinished) {
+			newPos = new Vector3(-1000f,-1000f,-1000f);
+			moveFinished = true;
 			alreadyMoving = false;
 			hasMoved = true;
-			//turnFinished = true;
 			deleteMoveRange ();
+			playerBusy = false;
+			controllingPlayer = null;
 		}
-
 	}
+
+	if (isDead) {
+		Destroy (this.gameObject);
+	} 
+	
+	if (hasMoved && hasAttacked) {
+		turnFinished = true;
+	}
+
+}
 }

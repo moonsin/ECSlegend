@@ -9,6 +9,7 @@ TagManager:
   - LevelChanger
   - MoveRanges
   - attackRange
+  - Enemy
   layers:
   - Default
   - TransparentFX
