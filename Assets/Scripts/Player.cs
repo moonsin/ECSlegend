@@ -18,11 +18,12 @@ public class Player : MovingObjects {
 
 	private Vector3 newPos;
 
-	public static Player controllingPlayer = null;
+	public static Player controllingPlayer;
 	public static string buttonChoice = null;
 	private bool playerBusy = false;
 	private bool moving = false;
 	private bool attacking = false;
+	private static bool OverOtherFinish = false;
 
 
 	public class AdjustPosition{
@@ -42,6 +43,7 @@ public class Player : MovingObjects {
 		AttackRange = new GameObject ("AttackRange").transform;
 		GameManager.instance.AddPlayerToList (this);
 		occupation = 4;
+		fullHP = 31;
 		base.Start ();
 	}
 
@@ -186,7 +188,11 @@ public class Player : MovingObjects {
 
 
 
-
+	void TemporarilyFinishi(){
+		playerBusy = false;
+		controllingPlayer = null;
+		OverOtherFinish = false;
+	}
 
 
 	// Update is called once per frame
@@ -210,15 +216,16 @@ public class Player : MovingObjects {
 			if (turnFinished == true) {
 				return;
 			}
-			if (Input.GetMouseButtonUp (0) && IsMouseOnPlayer (clickPos)) {
+			if (Input.GetMouseButtonUp (0) && IsMouseOnPlayer (clickPos) && !OverOtherFinish) {
 				controllingPlayer = this;
 				playerBusy = true;
+				OverOtherFinish = true;
 				GameManager.instance.ShowPlayerMenu (this);
+
 			} else {
 				return;
 			}
 		} else if (playerBusy == true && controllingPlayer == this && ! alreadyMoving) {
-			
 			if (Input.GetMouseButtonUp (0) && IsMouseOnPlayer (clickPos)) {
 				if (moving) {
 					deleteMoveRange ();
@@ -229,8 +236,7 @@ public class Player : MovingObjects {
 					GameManager.instance.ShowPlayerMenu (this);
 				} else {
 					GameManager.instance.HidePlayerMenu ();
-					playerBusy = false;
-					controllingPlayer = null;
+					TemporarilyFinishi ();
 				}
 			} else if (Input.GetMouseButtonUp (0) && IsMouseOnMoveRange (clickPos)) {
 				newPos = dirPos (clickPos);
@@ -254,14 +260,16 @@ public class Player : MovingObjects {
 					attackObject (target);
 					hasAttacked = true;
 				}
+				TemporarilyFinishi ();
 			}else if (Input.GetMouseButtonUp (0)) {
+				print (moving);
 				if (moving) {
 					deleteMoveRange ();
-					controllingPlayer = null;
+					TemporarilyFinishi ();
 				}
-				if (attacking) {
+				else if (attacking) {
 					deleteAttackRange ();
-					controllingPlayer = null;
+					TemporarilyFinishi ();
 				} else {
 					GameManager.instance.HidePlayerMenu ();
 					if (buttonChoice != null) {
@@ -271,18 +279,19 @@ public class Player : MovingObjects {
 						} else if (buttonChoice == "attack" && hasAttacked == false) {
 							showAttackRange ();
 							buttonChoice = null;
+							attacking = true;
 						} else if (buttonChoice == "rest") {
 							print (GameManager.instance.players.Count);
 							turnFinished = true;
-							controllingPlayer = null;
-							playerBusy = false;
 							buttonChoice = null;
+							TemporarilyFinishi ();
 						} 
 					} else {
-						playerBusy = false;
-						controllingPlayer = null;
+						print ("zaq");
+						TemporarilyFinishi ();
 					}
 				}
+
 			}
 		} 
 
@@ -303,8 +312,7 @@ public class Player : MovingObjects {
 			alreadyMoving = false;
 			hasMoved = true;
 			deleteMoveRange ();
-			playerBusy = false;
-			controllingPlayer = null;
+			TemporarilyFinishi ();
 		}
 	}
 

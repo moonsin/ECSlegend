@@ -8,10 +8,12 @@ public class Enemy : MovingObjects {
 	// Use this for initialization
 	void Start () {
 		hp = 10;
+		fullHP = 10;
 		attack = 30;
 		defense = 1;
 		MovePoints = 3;
 		GameManager.instance.AddEnemyToList (this);
+		base.Start ();
 	}
 
 	private List<Vector3> getNerestList(Vector3 Pos){

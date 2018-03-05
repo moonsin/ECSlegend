@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 
 public class MovingObjects : MonoBehaviour {
 
@@ -9,11 +10,13 @@ public class MovingObjects : MonoBehaviour {
 	public GameObject[] moveRangeInstances;
 	public GameObject[] attackRangeInstances;
 	public int speed;
+	public GameObject HPindicator;
 
 	public int MovePoints;
 	public int hp;
 	public int attack;
 	public int defense;
+	public int fullHP;
 
 	public bool hasMoved = false;
 	public bool hasAttacked = false;
@@ -31,10 +34,32 @@ public class MovingObjects : MonoBehaviour {
 	protected bool moveFinished = false;
 	protected bool alreadyMoving = false;
 
+	private GameObject objHpindicator;
+
 	// Use this for initialization
+	protected void inItHpIndicator (Transform range ){
+		//HPindicator.GetComponent<Text> ().text = "HP" + Convert.ToString(hp)+"/"+Convert.ToString(fullHP);
+
+		HPindicator.GetComponent<Text> ().text = Convert.ToString (this.name);
+		objHpindicator = HPindicator;
+
+
+		Vector3 pos = transform.position;
+		print (this.name);
+		print (pos);
+		Vector3 newPos = Camera.main.WorldToScreenPoint(new Vector3 (pos.x, pos.y+0.6f, -0.5f));
+		print (newPos);
+		objHpindicator.transform.position = newPos;
+
+		GameObject instance = Instantiate (objHpindicator, newPos, Quaternion.identity) as GameObject;
+		HPindicator.GetComponent<Text> ().text = "";
+
+		instance.transform.SetParent (range);
+	}
 
 	protected void Start () {
-		
+		Transform range = GameObject.Find ("HpIndicator").transform;
+		//inItHpIndicator (range);
 	}
 
 	public void loseHp(int hurt){

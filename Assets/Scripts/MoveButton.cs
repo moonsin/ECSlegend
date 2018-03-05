@@ -14,5 +14,5 @@ public class MoveButton : MonoBehaviour {
 		print ("Button Clicked. ClickHandler.");
 		Player.buttonChoice = "move"; 
 	}
-
+		
 }

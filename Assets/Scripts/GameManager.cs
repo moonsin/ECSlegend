@@ -20,11 +20,18 @@ public class GameManager : MonoBehaviour {
 	private Text turnIndicator;
 	private Text story;
 	private Text title;
+	private Button PlayerMenu_MoveButton;
+	private Button PlayerMenu_AttackButton;
+	private Button PlayerMenu_RestButton;
 	private Text dramaStory;
 	private GameObject BackgroundStoryImage;
 	private GameObject PlayerMenu;
 	private bool doingSetup = false;
 	private  AudioSource m_MyAudioSource;
+
+	public bool isMenuShowing(){
+		return playerMenuShowed;
+	}
 
 	public List<Player> GetAllPlayers(){
 		return players;
@@ -74,6 +81,19 @@ public class GameManager : MonoBehaviour {
 		Vector3 pos = player.transform.position;
 		Vector3 newPos = Camera.main.WorldToScreenPoint(new Vector3 (pos.x+1, pos.y, -0.5f));
 		PlayerMenu.transform.position = newPos;
+
+		//PlayerMenu_MoveButton.enabled = player.hasMoved ? false : true;
+		if (player.hasMoved) {
+			PlayerMenu_MoveButton.GetComponent<Image> ().color = Color.grey; 
+		} else {
+			PlayerMenu_MoveButton.GetComponent<Image> ().color = Color.blue;
+		}
+		if (player.hasAttacked) {
+			PlayerMenu_AttackButton.GetComponent<Image> ().color = Color.grey; 
+		} else {
+			PlayerMenu_AttackButton.GetComponent<Image> ().color = Color.blue;
+		}
+		PlayerMenu_RestButton.GetComponent<Image> ().color = Color.blue;
 		PlayerMenu.SetActive (true);
 		playerMenuShowed = true;
 	}
@@ -133,6 +153,9 @@ public class GameManager : MonoBehaviour {
 		doingSetup = true;
 		BackgroundStoryImage = GameObject.Find ("backGroundStory");
 		PlayerMenu = GameObject.Find ("playerMenu");
+		PlayerMenu_MoveButton = GameObject.Find ("MoveButton").GetComponent<Button> ();
+		PlayerMenu_AttackButton = GameObject.Find ("AttackButton").GetComponent<Button> ();
+		PlayerMenu_RestButton = GameObject.Find ("RestButton").GetComponent<Button> ();
 		HidePlayerMenu ();
 
 		turnIndicator = GameObject.Find ("turnIndicator").GetComponent<Text>();
