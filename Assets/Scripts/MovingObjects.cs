@@ -174,10 +174,11 @@ public class MovingObjects : MonoBehaviour {
 	}
 
 	protected void setBestPath(Vector3 newPos){
+		
 		bestPath = new List<Vector3> ();
 		int targetIndex = moveRanges.IndexOf (newPos);
 		bestPath.Add (newPos);
-	
+		print (targetIndex);
 		while(bestPathArray[targetIndex]!=0){
 			bestPath.Add (moveRanges [bestPathArray [targetIndex]]);
 			targetIndex = bestPathArray [targetIndex];

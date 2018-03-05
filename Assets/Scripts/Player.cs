@@ -191,6 +191,19 @@ public class Player : MovingObjects {
 
 	// Update is called once per frame
 	void Update () {
+
+		if (isDead) {
+			GameManager.instance.players.Remove (this);
+			Destroy (this.gameObject);
+		} 
+	
+		/*
+		if (hasMoved && hasAttacked) {
+			turnFinished = true;
+			return;
+		}
+		*/
+
 		clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
 		if (playerBusy == false) {
@@ -204,7 +217,7 @@ public class Player : MovingObjects {
 			} else {
 				return;
 			}
-		} else if (playerBusy == true && controllingPlayer == this) {
+		} else if (playerBusy == true && controllingPlayer == this && ! alreadyMoving) {
 			
 			if (Input.GetMouseButtonUp (0) && IsMouseOnPlayer (clickPos)) {
 				if (moving) {
@@ -259,6 +272,7 @@ public class Player : MovingObjects {
 							showAttackRange ();
 							buttonChoice = null;
 						} else if (buttonChoice == "rest") {
+							print (GameManager.instance.players.Count);
 							turnFinished = true;
 							controllingPlayer = null;
 							playerBusy = false;
@@ -292,14 +306,6 @@ public class Player : MovingObjects {
 			playerBusy = false;
 			controllingPlayer = null;
 		}
-	}
-
-	if (isDead) {
-		Destroy (this.gameObject);
-	} 
-	
-	if (hasMoved && hasAttacked) {
-		turnFinished = true;
 	}
 
 }

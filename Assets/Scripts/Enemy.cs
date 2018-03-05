@@ -67,6 +67,7 @@ public class Enemy : MovingObjects {
 
 	public void MoveEnemy(){
 		if (isNearPlayer (transform.position)) {
+			BestPlace = transform.position;
 			return;
 		} else {
 			setMoveRange (transform.position.x, transform.position.y);
@@ -126,8 +127,9 @@ public class Enemy : MovingObjects {
 	}
 
 	public void EnemyAttack(){
-		if (isNearPlayer(transform.position)) {
-			Player nerestPlayer = getNearestPlayer (transform.position);
+		print (isNearPlayer (BestPlace));
+		if (isNearPlayer(BestPlace)) {
+			Player nerestPlayer = getNearestPlayer (BestPlace);
 			attackPlayer (nerestPlayer);
 		} 
 		TurnFinish ();
@@ -159,6 +161,7 @@ public class Enemy : MovingObjects {
 		}
 
 		if (isDead) {
+			GameManager.instance.enemies.Remove (this);
 			Destroy (this.gameObject);
 		}
 			
