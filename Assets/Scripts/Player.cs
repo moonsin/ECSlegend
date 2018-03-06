@@ -91,8 +91,8 @@ public class Player : MovingObjects {
 	public void showRange(){
 
 		playerHolder = this.transform;
-		setMoveRange (playerHolder.position.x, playerHolder.position.y);
 
+		setMoveRange (playerHolder.position.x, playerHolder.position.y);
 		foreach (Vector3 element in moveRanges) {
 			setNewInstance (element, MoveRange, moveRangeTiles);
 		}
@@ -121,10 +121,14 @@ public class Player : MovingObjects {
 	}
 
 	private bool IsMouseOnAttackRange(Vector3 mousePos){
+		print (mousePos); 
+		mousePos.z = -0.5f;
 		Collider2D h = Physics2D.OverlapPoint (mousePos);
+
 		if (h == null) {
 			return false;
 		} else {
+			print (h.name == "attackRange(Clone)");
 			return(h.name == "attackRange(Clone)");
 		}
 	}
@@ -214,7 +218,6 @@ public class Player : MovingObjects {
 		}
 
 		if (isDead) {
-			print (GameObject.Find (this.name + "HpIndicator"));
 			GameObject.Find (this.name + "HpIndicator").GetComponent<Text> ().text = "";
 			Destroy (GameObject.Find (this.name + "HpIndicator"));
 			GameManager.instance.players.Remove (this);
@@ -260,6 +263,8 @@ public class Player : MovingObjects {
 				newPos = dirPos (clickPos);
 				alreadyMoving = true;
 				moveFinished = false;
+
+				//setMoveRange (this.transform.position.x, this.transform.position.y);
 				setBestPath (newPos);
 				movingToNum = bestPath.Count - 1;
 				moveRanges.Clear ();
@@ -334,12 +339,14 @@ public class Player : MovingObjects {
 		}
 
 		if (Vector3.Distance (this.transform.position, newPos) <= 0.01 && !moveFinished) {
+
 			newPos = new Vector3(-1000f,-1000f,-1000f);
 			moveFinished = true;
 			alreadyMoving = false;
 			hasMoved = true;
 			deleteMoveRange ();
 			TemporarilyFinishi ();
+			//animator.SetTrigger (this.name + "WalkDone");
 		}
 	}
 

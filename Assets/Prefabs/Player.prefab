@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 50283252138362144}
   - component: {fileID: 114737388090500658}
   - component: {fileID: 114442328671517578}
+  - component: {fileID: 114751122068068922}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -122,6 +123,7 @@ MonoBehaviour:
   HPindicator: {fileID: 1202797796695198, guid: b72419b90da7946a59d378cb0b7781a7,
     type: 2}
   player: {fileID: 114737388090500658}
+  newHPindicator: {fileID: 0}
 --- !u!114 &114737388090500658
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -136,7 +138,7 @@ MonoBehaviour:
   moveTime: 0.1
   moveRangeInstances: []
   attackRangeInstances: []
-  speed: 6
+  speed: 3
   MovePoints: 5
   hp: 31
   attack: 10
@@ -152,6 +154,21 @@ MonoBehaviour:
   - {fileID: 1170316032113410, guid: 272dc655d08284198841fba6c62164af, type: 2}
   occupation: 2
   attackPower: 1
+--- !u!114 &114751122068068922
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1725735759067676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ed89b244caff42f187c163e9d535071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
+  HpDecreseIndicator: {fileID: 0}
+  player: {fileID: 0}
+  enemy: {fileID: 0}
 --- !u!212 &212115462710732726
 SpriteRenderer:
   m_ObjectHideFlags: 1

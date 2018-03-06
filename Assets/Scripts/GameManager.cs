@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour {
 	public bool enemyObjectsSet = false;
 	public bool playerObjectsSet = false;
 
-	private bool enemyBusy = false;
 	private int busyEnemyIndex = 0;
 	public int turnNum = 1;
 
@@ -138,7 +137,7 @@ public class GameManager : MonoBehaviour {
 	private void showDramaStory(){
 		title.enabled = false;
 		dramaStory.enabled = true;
-		boardScript.LayoutObjectAtRandom (boardScript.treeTiles,boardScript.treeCount.minimum, boardScript.treeCount.maximum);
+		//boardScript.LayoutObjectAtRandom (boardScript.treeTiles,boardScript.treeCount.minimum, boardScript.treeCount.maximum);
 		Invoke ("HideBackgroundImage", 37f);
 	}
 
@@ -226,12 +225,14 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void OperateEnemy(Enemy enemy){
-		if (!enemy.GetTurnFinish() && !enemy.GetIsDead()) {
-			enemy.MoveEnemy ();
-			enemy.EnemyAttack ();
-		}
-		enemyBusy = false;
-		busyEnemyIndex += 1;
+		//turnText.text = Convert.ToString(enemy.hasMoved);
+			if (!enemy.hasMoved) {
+				enemy.MoveEnemy ();
+			}else {
+				enemy.EnemyAttack ();
+				busyEnemyIndex += 1;
+			}
+
 	}
 
 
@@ -282,6 +283,8 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		//turnText.text = Convert.ToString(busyEnemyIndex);
+			
 		if (doingSetup) {
 			return;
 		}
@@ -290,28 +293,26 @@ public class GameManager : MonoBehaviour {
 			showturnIndicator ();
 		}
 
-		/*
+
 		if (IsPlayTurnFinish () && !IsEnemyTurnFinish() ) {
 			if (busyEnemyIndex != 0) {
-				if (busyEnemyIndex < enemies.Count && enemies [busyEnemyIndex - 1].hasMoved) {
-					//enemyBusy = true;
+				if (busyEnemyIndex < enemies.Count && enemies [busyEnemyIndex - 1].turnFinished) {
 					OperateEnemy (enemies [busyEnemyIndex]);
 				}
 			} else {
 				if (busyEnemyIndex < enemies.Count) {
-					//enemyBusy = true;
 					OperateEnemy (enemies [busyEnemyIndex]);
 				}
 			}
 		}
-		*/
 
+		/*
 		if (IsPlayTurnFinish () && !IsEnemyTurnFinish ()) {
 			for (int i = 0; i < enemies.Count; i++) {
 				OperateEnemy (enemies[i]);
 			}
 		}
-
+*/
 		if (isAllPlayersdead()) {
 			gameOver.enabled = true;
 			return;

@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 61646154039684158}
   - component: {fileID: 114567914209647850}
   - component: {fileID: 114013632091947922}
+  - component: {fileID: 114602848897242966}
   m_Layer: 8
   m_Name: Enemy1
   m_TagString: Enemy
@@ -120,6 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canvas: {fileID: 0}
   HPindicator: {fileID: 0}
+  newHPindicator: {fileID: 0}
   enemy: {fileID: 0}
 --- !u!114 &114567914209647850
 MonoBehaviour:
@@ -135,7 +137,7 @@ MonoBehaviour:
   moveTime: 0.1
   moveRangeInstances: []
   attackRangeInstances: []
-  speed: 6
+  speed: 3
   MovePoints: 3
   hp: 40
   attack: 30
@@ -145,6 +147,22 @@ MonoBehaviour:
   hasAttacked: 0
   turnFinished: 0
   isDead: 0
+--- !u!114 &114602848897242966
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1101731718392638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ed89b244caff42f187c163e9d535071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
+  HpDecreseIndicator: {fileID: 1646131471220242, guid: 1d36fab700c4b4467a80d38db4703afc,
+    type: 2}
+  player: {fileID: 0}
+  enemy: {fileID: 114567914209647850}
 --- !u!212 &212088199888290202
 SpriteRenderer:
   m_ObjectHideFlags: 1

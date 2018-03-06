@@ -38,11 +38,12 @@ public class MovingObjects : MonoBehaviour {
 	protected Transform hpRange;
 	protected Vector3 pos;
 	private Text hpbar;
+	protected Animator animator; 
 
 
 
 	protected void Start () {
-
+		animator = GetComponent<Animator>();
 	}
 
 	public void loseHp(int hurt){
@@ -182,7 +183,7 @@ public class MovingObjects : MonoBehaviour {
 	}
 
 	protected void setBestPath(Vector3 newPos){
-		
+
 		bestPath = new List<Vector3> ();
 		int targetIndex = moveRanges.IndexOf (newPos);
 		bestPath.Add (newPos);
@@ -192,9 +193,17 @@ public class MovingObjects : MonoBehaviour {
 		}
 	}
 
+	protected void setMoveAnimate(){
+		if (this.tag == "Player") {
+			animator.SetTrigger (this.name + "Walk");
+		} else if (this.tag == "Enemy") {
+			//animator.SetTrigger ("EnemyWalk");
+		}
+	}
+
 	protected void move(bool alreadyMoving, Vector3 newPos){
 		if (alreadyMoving) {
-			
+			setMoveAnimate ();
 			float step = speed * Time.deltaTime;
 			this.transform.position = Vector3.MoveTowards (this.transform.position, newPos, step);
 
@@ -207,8 +216,11 @@ public class MovingObjects : MonoBehaviour {
 
 	protected void attackObject(Enemy obj){
 		int hurt = attack - obj.defense > 0 ? attack - obj.defense : 0;
+		obj.GetComponent<HPdereaseIndicator>().EnemySetHPdereaseIndicator (obj, hurt);
 		obj.hp -= hurt;
 		if (obj.hp <= 0) {
+			obj.GetComponent<HPdereaseIndicator> ().clear ();
+			obj.GetComponent<Hpindicator_Enemy> ().Clear ();
 			obj.isDead = true;
 			Destroy (GameObject.Find (obj.name + "HpIndicator"));
 			GameManager.instance.enemies.Remove (obj);
@@ -219,8 +231,11 @@ public class MovingObjects : MonoBehaviour {
 
 	protected void attackPlayer(Player obj){
 		int hurt = attack - obj.defense > 0 ? attack - obj.defense : 0;
+		obj.GetComponent<HPdereaseIndicator>().PlayerSetHPdereaseIndicator (obj, hurt);
 		obj.hp -= hurt;
 		if (obj.hp <= 0) {
+			obj.GetComponent<HPdereaseIndicator> ().clear ();
+			obj.GetComponent<Hpindicator> ().Clear ();
 			obj.isDead = true;
 			Destroy (GameObject.Find (obj.name + "HpIndicator"));
 			GameManager.instance.players.Remove (obj);

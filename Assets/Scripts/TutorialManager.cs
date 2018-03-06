@@ -29,7 +29,7 @@ public class TutorialManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		//firstGuide = GameObject.Find ("firstGuide").GetComponent<Text>();
+		
 		Invoke ("init", 71.5f);
 
 		//test code

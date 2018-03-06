@@ -32,6 +32,7 @@ public class Enemy : MovingObjects {
 
 	private bool isNearPlayer(Vector3 Pos){
 		List<Vector3> list = getNerestList(Pos);
+
 		for(int i = 0 ; i< list.Count; i++){
 			Collider2D h = Physics2D.OverlapPoint (list[i]);
 			if (h != null) {
@@ -64,29 +65,38 @@ public class Enemy : MovingObjects {
 	}
 
 	public void MoveEnemy(){
-		if (isNearPlayer (transform.position)) {
-			BestPlace = transform.position;
+		if (isNearPlayer (transform.position) &&!alreadyMoving && ! moveFinished) {
 			hasMoved = true;
+			BestPlace = transform.position;
 			return;
-		} else {
-			setMoveRange (transform.position.x, transform.position.y);
-			target = FindTarget ();
-
-			BestPlace = new Vector3 (-1f, -1f, -1f);
-			float shortestDis = 10000;
-			for (int i = 0; i < moveRanges.Count; i++) {
-				float distance = Mathf.Abs (Vector3.Distance (target, moveRanges [i]));
-				if (distance < shortestDis) {
-					shortestDis = distance;
-					BestPlace = moveRanges [i];
-				}
+		} else if (!alreadyMoving)  {
+				alreadyMoving = true;
+				
+				setMoveRange (transform.position.x, transform.position.y);
+				
+			if(moveRanges.Count == 0){
+				hasMoved = true;
+				BestPlace = transform.position;
+				return;
 			}
-			alreadyMoving = true;
-			moveFinished = false;
-			setBestPath (BestPlace);
-			movingToNum = bestPath.Count - 1;
-			moveRanges.Clear ();
-		}
+				
+				target = FindTarget ();
+				
+				BestPlace = new Vector3 (-1f, -1f, -1f);
+				float shortestDis = 10000;
+				for (int i = 0; i < moveRanges.Count; i++) {
+					float distance = Mathf.Abs (Vector3.Distance (target, moveRanges [i]));
+					if (distance < shortestDis) {
+						shortestDis = distance;
+						BestPlace = moveRanges [i];
+					}
+				}
+
+				moveFinished = false;
+				setBestPath (BestPlace);
+				movingToNum = bestPath.Count - 1;
+				moveRanges.Clear ();
+			}
 
 	}
 
@@ -125,8 +135,8 @@ public class Enemy : MovingObjects {
 	}
 
 	public void EnemyAttack(){
-		if (isNearPlayer(BestPlace)) {
-			Player nerestPlayer = getNearestPlayer (BestPlace);
+		if (isNearPlayer(transform.position)) {
+			Player nerestPlayer = getNearestPlayer (transform.position);
 			attackPlayer (nerestPlayer);
 		} 
 		TurnFinish ();
@@ -140,6 +150,7 @@ public class Enemy : MovingObjects {
 
 	// Update is called once per frame
 	void Update () {
+		
 		if (GameManager.instance.isAllPlayersdead()) {
 			GameManager.instance.gameOver.enabled = true;
 			return;
@@ -152,7 +163,7 @@ public class Enemy : MovingObjects {
 			return;
 		}
 
-		if ( BestPlace != new Vector3(-1000f,-1000f,-1000f) && ! hasMoved){
+		if ( BestPlace != this.transform.position && ! hasMoved){
 			for (int i = bestPath.Count-1; i >=0 ; i--) {
 				if (Vector3.Distance (this.transform.position, bestPath [i]) >= 0.01 && movingToNum == i) {
 					move (alreadyMoving, bestPath [i]);
@@ -161,8 +172,8 @@ public class Enemy : MovingObjects {
 				}
 			}
 				
-			if (Vector3.Distance (this.transform.position, BestPlace) <= 0.001 && !moveFinished) {
-				BestPlace = new Vector3 (-1000f, -1000f, -1000f);
+			if (Vector3.Distance (this.transform.position, BestPlace) <= 0.1 && !moveFinished) {
+				BestPlace = this.transform.position;
 				moveFinished = true;
 				alreadyMoving = false;
 				hasMoved = true;

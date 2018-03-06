@@ -8,6 +8,7 @@ public class Hpindicator : MonoBehaviour {
 	public Canvas canvas;
 	public GameObject HPindicator;
 	public Player player;
+	public GameObject newHPindicator;
 
 	// Use this for initialization
 	protected void inItHpIndicator (){
@@ -25,20 +26,22 @@ public class Hpindicator : MonoBehaviour {
 		instance.transform.position = newPos;
 
 		instance.GetComponent<Text> ().text = "HP:" + Convert.ToString(player.hp) + "/" + Convert.ToString(player.fullHP);
-
+		newHPindicator = instance;
 
 	}
 
+	public void Clear(){
+		Destroy (newHPindicator);
+	}
 
 	void Start () {
-		//inItHpIndicator ();
+		inItHpIndicator ();
 	
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		Destroy (GameObject.Find (player.name + "HpIndicator"));
-		print (player.isDead);
+		Destroy (newHPindicator);
 		if (GameManager.instance.beginingAniFinished) {
 			inItHpIndicator ();
 		}
