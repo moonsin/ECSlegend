@@ -7,11 +7,7 @@ public class Enemy : MovingObjects {
 	Vector3 BestPlace;
 	// Use this for initialization
 	void Start () {
-		hp = 10;
-		fullHP = 10;
-		attack = 30;
-		defense = 1;
-		MovePoints = 3;
+		fullHP = hp;
 		GameManager.instance.AddEnemyToList (this);
 		base.Start ();
 	}
@@ -70,6 +66,7 @@ public class Enemy : MovingObjects {
 	public void MoveEnemy(){
 		if (isNearPlayer (transform.position)) {
 			BestPlace = transform.position;
+			hasMoved = true;
 			return;
 		} else {
 			setMoveRange (transform.position.x, transform.position.y);
@@ -84,7 +81,6 @@ public class Enemy : MovingObjects {
 					BestPlace = moveRanges [i];
 				}
 			}
-			print (shortestDis);
 			alreadyMoving = true;
 			moveFinished = false;
 			setBestPath (BestPlace);
@@ -129,7 +125,6 @@ public class Enemy : MovingObjects {
 	}
 
 	public void EnemyAttack(){
-		print (isNearPlayer (BestPlace));
 		if (isNearPlayer(BestPlace)) {
 			Player nerestPlayer = getNearestPlayer (BestPlace);
 			attackPlayer (nerestPlayer);
@@ -145,7 +140,19 @@ public class Enemy : MovingObjects {
 
 	// Update is called once per frame
 	void Update () {
-		if ( BestPlace != new Vector3(-1000f,-1000f,-1000f)){
+		if (GameManager.instance.isAllPlayersdead()) {
+			GameManager.instance.gameOver.enabled = true;
+			return;
+		}
+		if (GameManager.instance.isAllEnemiesdead()) {
+			GameManager.instance.Victory.enabled = true;
+			return;
+		}
+		if (GameManager.instance.doingSetup) {
+			return;
+		}
+
+		if ( BestPlace != new Vector3(-1000f,-1000f,-1000f) && ! hasMoved){
 			for (int i = bestPath.Count-1; i >=0 ; i--) {
 				if (Vector3.Distance (this.transform.position, bestPath [i]) >= 0.01 && movingToNum == i) {
 					move (alreadyMoving, bestPath [i]);
@@ -163,6 +170,8 @@ public class Enemy : MovingObjects {
 		}
 
 		if (isDead) {
+			
+			Destroy (GameObject.Find (this.name + "HpIndicator"));
 			GameManager.instance.enemies.Remove (this);
 			Destroy (this.gameObject);
 		}

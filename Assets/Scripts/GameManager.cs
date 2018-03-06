@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Threading;
-
+using System;
 public class GameManager : MonoBehaviour {
 
 	public static GameManager instance = null;
@@ -13,11 +12,22 @@ public class GameManager : MonoBehaviour {
 	public float turnChangeDelay = 0.5f;
 	public bool enemyTurnShowed = false;
 	public bool playerTurnShowed = false;
+	public bool beginingAniFinished = false;
+	public GameObject DiaLogImage;
+	public GameObject tutorialImage;
+	public bool enemyObjectsSet = false;
+	public bool playerObjectsSet = false;
 
+	private bool enemyBusy = false;
+	private int busyEnemyIndex = 0;
+	public int turnNum = 1;
 
 	public List<Player> players;
 	public List<Enemy> enemies;
-	private Text turnIndicator;
+	public Text turnIndicator;
+	public Text turnText;
+	public Text gameOver;
+	public Text Victory;
 	private Text story;
 	private Text title;
 	private Button PlayerMenu_MoveButton;
@@ -26,8 +36,9 @@ public class GameManager : MonoBehaviour {
 	private Text dramaStory;
 	private GameObject BackgroundStoryImage;
 	private GameObject PlayerMenu;
-	private bool doingSetup = false;
+	public bool doingSetup = false;
 	private  AudioSource m_MyAudioSource;
+	private TutorialManager tutorial;
 
 	public bool isMenuShowing(){
 		return playerMenuShowed;
@@ -50,6 +61,7 @@ public class GameManager : MonoBehaviour {
 		enemies = new List<Enemy> ();
 		players = new List<Player> ();
 		boardScript = GetComponent<BoardManager> ();
+		tutorial = GetComponent<TutorialManager> ();
 		InitGame ();
 	}
 
@@ -64,10 +76,11 @@ public class GameManager : MonoBehaviour {
 	private void HideBackgroundImage(){
 		BackgroundStoryImage.SetActive (false);
 		StopBackGroundMusic ();
-		Invoke ("HideturnIndicator", turnChangeDelay);
+		beginingAniFinished = true;
+		//Invoke ("HideturnIndicator", turnChangeDelay);
 	}
 
-	private void HideturnIndicator(){
+	public void HideturnIndicator(){
 		turnIndicator.enabled = false;
 		doingSetup = false;
 	}
@@ -96,6 +109,10 @@ public class GameManager : MonoBehaviour {
 		PlayerMenu_RestButton.GetComponent<Image> ().color = Color.blue;
 		PlayerMenu.SetActive (true);
 		playerMenuShowed = true;
+
+		tutorial.firstClickMenu = true;
+
+
 	}
 
 	private void showturnIndicator(){
@@ -121,6 +138,7 @@ public class GameManager : MonoBehaviour {
 	private void showDramaStory(){
 		title.enabled = false;
 		dramaStory.enabled = true;
+		boardScript.LayoutObjectAtRandom (boardScript.treeTiles,boardScript.treeCount.minimum, boardScript.treeCount.maximum);
 		Invoke ("HideBackgroundImage", 37f);
 	}
 
@@ -147,6 +165,8 @@ public class GameManager : MonoBehaviour {
 		m_MyAudioSource.Stop ();
 	}
 
+
+
 	void InitGame(){
 
 		m_MyAudioSource = GameObject.Find("BackgroundMusic").GetComponent<AudioSource>();
@@ -159,20 +179,30 @@ public class GameManager : MonoBehaviour {
 		HidePlayerMenu ();
 
 		turnIndicator = GameObject.Find ("turnIndicator").GetComponent<Text>();
+		turnText = GameObject.Find ("turnText").GetComponent<Text>();
+		gameOver = GameObject.Find ("gameOver").GetComponent<Text>();
+		Victory = GameObject.Find ("Victory").GetComponent<Text>();
 		story = GameObject.Find ("Story").GetComponent<Text>();
 		title = GameObject.Find ("Title").GetComponent<Text>();
 		dramaStory = GameObject.Find ("dramaStory").GetComponent<Text>();
+		DiaLogImage = GameObject.Find ("dialogBox");
+		tutorialImage = GameObject.Find ("tutorial");
 
-		//Vector3 newPost = Camera.main.WorldToScreenPoint(new Vector3 (2.5f, 2.5f -0.5f));
-		//PlayerMenu.transform.position = newPost;
 
+		turnIndicator.enabled = false;
+		gameOver.enabled = false;
+		Victory.enabled = false;
 
-		//InitBackGround();
+		DiaLogImage.SetActive (false);
+		tutorialImage.SetActive(false);
+
+		InitBackGround();
 
 		//test code
-		HideBackgroundImage();
+		//HideBackgroundImage();
 
 		boardScript.SetupScene ();
+
 	}
 
 	public bool IsPlayTurnFinish(){
@@ -199,12 +229,15 @@ public class GameManager : MonoBehaviour {
 		if (!enemy.GetTurnFinish() && !enemy.GetIsDead()) {
 			enemy.MoveEnemy ();
 			enemy.EnemyAttack ();
-			}
+		}
+		enemyBusy = false;
+		busyEnemyIndex += 1;
 	}
 
 
 	void newTurn(){
-		
+		turnNum += 1;
+		turnText.text = "Turn: " + Convert.ToString (turnNum);
 		playerTurnShowed = true;
 
 		for (int i = 0; i < players.Count; i++) {
@@ -222,8 +255,33 @@ public class GameManager : MonoBehaviour {
 
 	}
 
+	public bool isAllPlayersdead(){
+		if (players.Count != 0) {
+			playerObjectsSet = true;
+			return false;
+		} else if (playerObjectsSet) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public bool isAllEnemiesdead(){
+		if (enemies.Count != 0) {
+			enemyObjectsSet = true;
+			return false;
+		} else if (enemyObjectsSet) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
+
 	// Update is called once per frame
 	void Update () {
+
 		if (doingSetup) {
 			return;
 		}
@@ -231,16 +289,43 @@ public class GameManager : MonoBehaviour {
 			turnIndicator.text = "Enemies' turn!";
 			showturnIndicator ();
 		}
-		if (IsPlayTurnFinish () && !IsEnemyTurnFinish()) {
+
+		/*
+		if (IsPlayTurnFinish () && !IsEnemyTurnFinish() ) {
+			if (busyEnemyIndex != 0) {
+				if (busyEnemyIndex < enemies.Count && enemies [busyEnemyIndex - 1].hasMoved) {
+					//enemyBusy = true;
+					OperateEnemy (enemies [busyEnemyIndex]);
+				}
+			} else {
+				if (busyEnemyIndex < enemies.Count) {
+					//enemyBusy = true;
+					OperateEnemy (enemies [busyEnemyIndex]);
+				}
+			}
+		}
+		*/
+
+		if (IsPlayTurnFinish () && !IsEnemyTurnFinish ()) {
 			for (int i = 0; i < enemies.Count; i++) {
 				OperateEnemy (enemies[i]);
 			}
 		}
+
+		if (isAllPlayersdead()) {
+			gameOver.enabled = true;
+			return;
+		}
+		if (isAllEnemiesdead()) {
+			Victory.enabled = true;
+			return;
+		}
+
 		if (IsPlayTurnFinish () && IsEnemyTurnFinish ()&& !playerTurnShowed) {
-			
+			busyEnemyIndex = 0;
 			newTurn ();
 			Invoke ("showturnIndicator2", 1.5f);
 		}
-
+		
 	}
 }

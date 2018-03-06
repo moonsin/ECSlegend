@@ -44,7 +44,7 @@ TextureImporter:
   alignment: 6
   spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 200
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -55,7 +55,7 @@ TextureImporter:
   textureFormatSet: 0
   platformSettings:
   - buildTarget: DefaultTexturePlatform
-    maxTextureSize: 1024
+    maxTextureSize: 256
     resizeAlgorithm: 1
     textureFormat: -1
     textureCompression: 2
@@ -65,7 +65,7 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
   - buildTarget: Standalone
-    maxTextureSize: 1024
+    maxTextureSize: 256
     resizeAlgorithm: 1
     textureFormat: -1
     textureCompression: 2
@@ -75,7 +75,7 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
   - buildTarget: iPhone
-    maxTextureSize: 1024
+    maxTextureSize: 256
     resizeAlgorithm: 1
     textureFormat: -1
     textureCompression: 2
@@ -85,7 +85,7 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
   - buildTarget: tvOS
-    maxTextureSize: 1024
+    maxTextureSize: 256
     resizeAlgorithm: 1
     textureFormat: -1
     textureCompression: 2
@@ -95,7 +95,7 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
   - buildTarget: Android
-    maxTextureSize: 1024
+    maxTextureSize: 256
     resizeAlgorithm: 1
     textureFormat: -1
     textureCompression: 2
@@ -105,7 +105,7 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
   - buildTarget: WebGL
-    maxTextureSize: 1024
+    maxTextureSize: 256
     resizeAlgorithm: 1
     textureFormat: -1
     textureCompression: 2

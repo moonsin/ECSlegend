@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Threading;
 
 
@@ -24,7 +25,7 @@ public class Player : MovingObjects {
 	private bool moving = false;
 	private bool attacking = false;
 	private static bool OverOtherFinish = false;
-
+	private TutorialManager tutorial;
 
 	public class AdjustPosition{
 		public float x;
@@ -42,8 +43,10 @@ public class Player : MovingObjects {
 		MoveRange = new GameObject ("MoveRange").transform;
 		AttackRange = new GameObject ("AttackRange").transform;
 		GameManager.instance.AddPlayerToList (this);
-		occupation = 4;
-		fullHP = 31;
+		tutorial = GameManager.instance.GetComponent<TutorialManager> ();
+			
+		//occupation = 4;
+		fullHP = hp;
 		base.Start ();
 	}
 
@@ -151,7 +154,6 @@ public class Player : MovingObjects {
 			for (int i = -2; i <= 2; i++) {
 				for (int j = -2; j <= 2; j++) {
 					if ((i == 0 || j == 0) && !(i == 0 && j == 0)) {
-						print (new Vector3 (transform.position.x + i, transform.position.y + j, -0.5f));
 						setNewInstance (new Vector3 (transform.position.x + i, transform.position.y + j, -0.5f), AttackRange, attackRangeTiles);
 
 					}
@@ -197,8 +199,24 @@ public class Player : MovingObjects {
 
 	// Update is called once per frame
 	void Update () {
+		
+		if (GameManager.instance.isAllPlayersdead()) {
+			GameManager.instance.gameOver.enabled = true;
+			return;
+		}
+		if (GameManager.instance.isAllEnemiesdead()) {
+			GameManager.instance.Victory.enabled = true;
+			return;
+		}
+
+		if (GameManager.instance.doingSetup) {
+			return;
+		}
 
 		if (isDead) {
+			print (GameObject.Find (this.name + "HpIndicator"));
+			GameObject.Find (this.name + "HpIndicator").GetComponent<Text> ().text = "";
+			Destroy (GameObject.Find (this.name + "HpIndicator"));
 			GameManager.instance.players.Remove (this);
 			Destroy (this.gameObject);
 		} 
@@ -262,7 +280,6 @@ public class Player : MovingObjects {
 				}
 				TemporarilyFinishi ();
 			}else if (Input.GetMouseButtonUp (0)) {
-				print (moving);
 				if (moving) {
 					deleteMoveRange ();
 					TemporarilyFinishi ();
@@ -275,19 +292,29 @@ public class Player : MovingObjects {
 					if (buttonChoice != null) {
 						if (buttonChoice == "move" && hasMoved == false) {
 							showRange ();
+							tutorial.firstClickMove = true;
 							buttonChoice = null;
 						} else if (buttonChoice == "attack" && hasAttacked == false) {
+							if (this.name == "archer") {
+								tutorial.firstClickArcherAttack = true;
+							} else if (this.name == "mage") {
+								tutorial.firstClickMageAttack = true;
+							} else if (this.name == "knight") {
+								tutorial.firstClickKnightAttack = true;
+							} else if (this.name == "Berserker") {
+								tutorial.firstClickBerserkerAttack = true;
+							}
+
 							showAttackRange ();
 							buttonChoice = null;
 							attacking = true;
 						} else if (buttonChoice == "rest") {
-							print (GameManager.instance.players.Count);
+							tutorial.firstRest = true;
 							turnFinished = true;
 							buttonChoice = null;
 							TemporarilyFinishi ();
 						} 
 					} else {
-						print ("zaq");
 						TemporarilyFinishi ();
 					}
 				}
@@ -297,7 +324,7 @@ public class Player : MovingObjects {
 
 
 
-	if(newPos!=new Vector3(-1000f,-1000f,-1000f)){
+	if(newPos!=new Vector3(-1000f,-1000f,-1000f) ){
 		for (int i = bestPath.Count-1; i >=0 ; i--) {
 			if (Vector3.Distance (this.transform.position, bestPath [i]) >= 0.01 && movingToNum == i) {
 				move (alreadyMoving, bestPath [i]);

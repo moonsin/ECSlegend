@@ -10,7 +10,7 @@ public class MovingObjects : MonoBehaviour {
 	public GameObject[] moveRangeInstances;
 	public GameObject[] attackRangeInstances;
 	public int speed;
-	public GameObject HPindicator;
+
 
 	public int MovePoints;
 	public int hp;
@@ -22,7 +22,7 @@ public class MovingObjects : MonoBehaviour {
 	public bool hasAttacked = false;
 
 	public bool turnFinished = false;
-	protected bool isDead = false;
+	public bool isDead = false;
 	protected List<Vector3> moveRanges = new List<Vector3> ();
 	protected List<Vector3> bestPath = new List<Vector3> ();
 	protected int[] bestPathArray;
@@ -35,31 +35,14 @@ public class MovingObjects : MonoBehaviour {
 	protected bool alreadyMoving = false;
 
 	private GameObject objHpindicator;
-
-	// Use this for initialization
-	protected void inItHpIndicator (Transform range ){
-		//HPindicator.GetComponent<Text> ().text = "HP" + Convert.ToString(hp)+"/"+Convert.ToString(fullHP);
-
-		HPindicator.GetComponent<Text> ().text = Convert.ToString (this.name);
-		objHpindicator = HPindicator;
+	protected Transform hpRange;
+	protected Vector3 pos;
+	private Text hpbar;
 
 
-		Vector3 pos = transform.position;
-		print (this.name);
-		print (pos);
-		Vector3 newPos = Camera.main.WorldToScreenPoint(new Vector3 (pos.x, pos.y+0.6f, -0.5f));
-		print (newPos);
-		objHpindicator.transform.position = newPos;
-
-		GameObject instance = Instantiate (objHpindicator, newPos, Quaternion.identity) as GameObject;
-		HPindicator.GetComponent<Text> ().text = "";
-
-		instance.transform.SetParent (range);
-	}
 
 	protected void Start () {
-		Transform range = GameObject.Find ("HpIndicator").transform;
-		//inItHpIndicator (range);
+
 	}
 
 	public void loseHp(int hurt){
@@ -203,7 +186,6 @@ public class MovingObjects : MonoBehaviour {
 		bestPath = new List<Vector3> ();
 		int targetIndex = moveRanges.IndexOf (newPos);
 		bestPath.Add (newPos);
-		print (targetIndex);
 		while(bestPathArray[targetIndex]!=0){
 			bestPath.Add (moveRanges [bestPathArray [targetIndex]]);
 			targetIndex = bestPathArray [targetIndex];
@@ -228,6 +210,10 @@ public class MovingObjects : MonoBehaviour {
 		obj.hp -= hurt;
 		if (obj.hp <= 0) {
 			obj.isDead = true;
+			Destroy (GameObject.Find (obj.name + "HpIndicator"));
+			GameManager.instance.enemies.Remove (obj);
+			Destroy (obj.gameObject);
+			Destroy (obj);
 		}
 	}
 
@@ -236,6 +222,10 @@ public class MovingObjects : MonoBehaviour {
 		obj.hp -= hurt;
 		if (obj.hp <= 0) {
 			obj.isDead = true;
+			Destroy (GameObject.Find (obj.name + "HpIndicator"));
+			GameManager.instance.players.Remove (obj);
+			Destroy (obj.gameObject);
+			Destroy (obj);
 		}
 	}
 

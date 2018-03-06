@@ -48,8 +48,13 @@ public class BoardManager : MonoBehaviour {
 		for (int x = -2; x < colums + 2; x++) {
 			for (int y = -2; y < rows + 2; y++) {
 				GameObject toInstantiate = floorTiles [Random.Range (0, floorTiles.Length)];
+
 				if (x <= -1 || x >= colums || y <= -1 || y >= rows) {
-					toInstantiate = outerTreeTiles [Random.Range (0, outerTreeTiles.Length)];
+					if (x > 0 && x < 3 && y <= -1) {
+						toInstantiate = outerTreeTiles [1];
+					} else {
+						toInstantiate = outerTreeTiles [0];
+					}
 				}
 
 				toInstantiate.transform.localScale = new Vector3 (0.78f, 0.78f, 0f);
@@ -63,18 +68,20 @@ public class BoardManager : MonoBehaviour {
 		BoardSetup ();
 		InitialiseList ();
 
-		LayoutObjectAtRandom (treeTiles, treeCount.minimum, treeCount.maximum);
+		//LayoutObjectAtRandom (treeTiles, treeCount.minimum, treeCount.maximum);
 	}
 
-	void LayoutObjectAtRandom (GameObject[] tileArray, int minimum, int maximum){
+	public void LayoutObjectAtRandom (GameObject[] tileArray, int minimum, int maximum){
 		int objectCount = Random.Range (minimum, maximum);
 		for (int i = 0; i < objectCount; i++) {
 			Vector3 randomPosition = RandomPosition ();
 
 			GameObject tileChoice = tileArray [Random.Range (0, tileArray.Length)];
-
+			Collider2D h = Physics2D.OverlapPoint (randomPosition);
+			if(h == null){
 			tileChoice.transform.localScale = new Vector3 (0.78f, 0.78f, 0f);
-			Instantiate (tileChoice, randomPosition, Quaternion.identity);
+				Instantiate (tileChoice, randomPosition, Quaternion.identity);
+			}
 		}
 	}
 

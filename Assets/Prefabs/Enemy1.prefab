@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 50256798305570740}
   - component: {fileID: 61646154039684158}
   - component: {fileID: 114567914209647850}
+  - component: {fileID: 114013632091947922}
   m_Layer: 8
   m_Name: Enemy1
   m_TagString: Enemy
@@ -106,6 +107,20 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114013632091947922
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1101731718392638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f5a9e2939b841df877623fb62a7e59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
+  HPindicator: {fileID: 0}
+  enemy: {fileID: 0}
 --- !u!114 &114567914209647850
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -122,12 +137,14 @@ MonoBehaviour:
   attackRangeInstances: []
   speed: 6
   MovePoints: 3
-  hp: 10
-  attack: 6
-  defense: 1
+  hp: 40
+  attack: 30
+  defense: 5
+  fullHP: 40
   hasMoved: 0
   hasAttacked: 0
   turnFinished: 0
+  isDead: 0
 --- !u!212 &212088199888290202
 SpriteRenderer:
   m_ObjectHideFlags: 1

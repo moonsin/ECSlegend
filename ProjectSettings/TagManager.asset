@@ -53,3 +53,6 @@ TagManager:
   - name: Item
     uniqueID: 4078696325
     locked: 0
+  - name: indicator
+    uniqueID: 433571287
+    locked: 0

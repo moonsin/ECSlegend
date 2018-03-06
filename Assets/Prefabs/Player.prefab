@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 61850244585727748}
   - component: {fileID: 50283252138362144}
   - component: {fileID: 114737388090500658}
+  - component: {fileID: 114442328671517578}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -106,6 +107,21 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114442328671517578
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1725735759067676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a0822876e8a348af9bd7c8e6a2bd55d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 223417110930248306, guid: 8e050b940653a4dee81b59b99dccb0d1, type: 2}
+  HPindicator: {fileID: 1202797796695198, guid: b72419b90da7946a59d378cb0b7781a7,
+    type: 2}
+  player: {fileID: 114737388090500658}
 --- !u!114 &114737388090500658
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -119,11 +135,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveTime: 0.1
   moveRangeInstances: []
+  attackRangeInstances: []
   speed: 6
   MovePoints: 5
   hp: 31
   attack: 10
   defense: 5
+  fullHP: 0
+  hasMoved: 0
+  hasAttacked: 0
+  turnFinished: 0
+  isDead: 0
   moveRangeTiles:
   - {fileID: 1224064817818560, guid: 91b0477fe8d9e495cb0f9c14e1a1d8e6, type: 2}
   attackRangeTiles:
