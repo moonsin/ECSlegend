@@ -134,6 +134,7 @@ public class Player : MovingObjects {
 	}
 
 	private bool isInEnemy(Vector3 mousePos){
+		mousePos.z = -0.5f;
 		Collider2D h = Physics2D.OverlapPoint (mousePos);
 
 		if (h != null) {
@@ -210,6 +211,7 @@ public class Player : MovingObjects {
 		}
 		if (GameManager.instance.isAllEnemiesdead()) {
 			GameManager.instance.Victory.enabled = true;
+			GameManager.instance.victory = true;
 			return;
 		}
 
@@ -331,14 +333,14 @@ public class Player : MovingObjects {
 
 	if(newPos!=new Vector3(-1000f,-1000f,-1000f) ){
 		for (int i = bestPath.Count-1; i >=0 ; i--) {
-			if (Vector3.Distance (this.transform.position, bestPath [i]) >= 0.01 && movingToNum == i) {
+			if (Vector3.Distance (this.transform.position, bestPath [i]) >= float.Epsilon && movingToNum == i) {
 				move (alreadyMoving, bestPath [i]);
-			} else if (Vector3.Distance (this.transform.position, bestPath [i]) <= 0.01 && movingToNum == i){
+			} else if (Vector3.Distance (this.transform.position, bestPath [i]) <= float.Epsilon && movingToNum == i){
 				movingToNum -= 1;
 			}
 		}
 
-		if (Vector3.Distance (this.transform.position, newPos) <= 0.01 && !moveFinished) {
+		if (Vector3.Distance (this.transform.position, newPos) <= float.Epsilon && !moveFinished) {
 
 			newPos = new Vector3(-1000f,-1000f,-1000f);
 			moveFinished = true;

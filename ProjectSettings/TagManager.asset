@@ -10,6 +10,7 @@ TagManager:
   - MoveRanges
   - attackRange
   - Enemy
+  - HpIndicator
   layers:
   - Default
   - TransparentFX

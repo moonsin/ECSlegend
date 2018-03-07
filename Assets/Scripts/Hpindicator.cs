@@ -42,7 +42,7 @@ public class Hpindicator : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		Destroy (newHPindicator);
-		if (GameManager.instance.beginingAniFinished) {
+		if (GameManager.instance.beginingAniFinished && !GameManager.instance.victory) {
 			inItHpIndicator ();
 		}
 

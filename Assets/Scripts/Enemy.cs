@@ -16,10 +16,10 @@ public class Enemy : MovingObjects {
 
 		List<Vector3> list;
 		list = new List<Vector3> ();
-		Vector3 n = new Vector3 (Pos.x, Pos.y + 1f, 0f);
-		Vector3 s = new Vector3 (Pos.x, Pos.y - 1f, 0f);
-		Vector3 w = new Vector3 (Pos.x + 1f, Pos.y, 0f);
-		Vector3 e = new Vector3 (Pos.x - 1f, Pos.y, 0f);
+		Vector3 n = new Vector3 (Pos.x, Pos.y + 1f, -0.5f);
+		Vector3 s = new Vector3 (Pos.x, Pos.y - 1f, -0.5f);
+		Vector3 w = new Vector3 (Pos.x + 1f, Pos.y, -0.5f);
+		Vector3 e = new Vector3 (Pos.x - 1f, Pos.y, -0.5f);
 
 
 		list.Add(n);
@@ -65,7 +65,7 @@ public class Enemy : MovingObjects {
 	}
 
 	public void MoveEnemy(){
-		if (isNearPlayer (transform.position) &&!alreadyMoving && ! moveFinished) {
+		if (isNearPlayer (transform.position) &&!alreadyMoving) {
 			hasMoved = true;
 			BestPlace = transform.position;
 			return;
@@ -157,6 +157,7 @@ public class Enemy : MovingObjects {
 		}
 		if (GameManager.instance.isAllEnemiesdead()) {
 			GameManager.instance.Victory.enabled = true;
+			GameManager.instance.victory = true;
 			return;
 		}
 		if (GameManager.instance.doingSetup) {
@@ -165,14 +166,14 @@ public class Enemy : MovingObjects {
 
 		if ( BestPlace != this.transform.position && ! hasMoved){
 			for (int i = bestPath.Count-1; i >=0 ; i--) {
-				if (Vector3.Distance (this.transform.position, bestPath [i]) >= 0.01 && movingToNum == i) {
+				if (Vector3.Distance (this.transform.position, bestPath [i]) >= float.Epsilon && movingToNum == i) {
 					move (alreadyMoving, bestPath [i]);
-				} else if (Vector3.Distance (this.transform.position, bestPath [i]) <= 0.01 && movingToNum == i){
+				} else if (Vector3.Distance (this.transform.position, bestPath [i]) <= float.Epsilon && movingToNum == i){
 					movingToNum -= 1;
 				}
 			}
 				
-			if (Vector3.Distance (this.transform.position, BestPlace) <= 0.1 && !moveFinished) {
+			if (Vector3.Distance (this.transform.position, BestPlace) <= float.Epsilon && !moveFinished) {
 				BestPlace = this.transform.position;
 				moveFinished = true;
 				alreadyMoving = false;

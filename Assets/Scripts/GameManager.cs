@@ -27,6 +27,10 @@ public class GameManager : MonoBehaviour {
 	public Text turnText;
 	public Text gameOver;
 	public Text Victory;
+	public bool victory = false;
+	public Text endTitle;
+	public Text MemoryOf;
+	public Text Finaltitle;
 	private Text story;
 	private Text title;
 	private Button PlayerMenu_MoveButton;
@@ -37,7 +41,10 @@ public class GameManager : MonoBehaviour {
 	private GameObject PlayerMenu;
 	public bool doingSetup = false;
 	private  AudioSource m_MyAudioSource;
+	private  AudioSource endMusic;
 	private TutorialManager tutorial;
+	private bool FinalAniAlreadyPlayed = false;
+	private bool timeplyMoved = false;
 
 	public bool isMenuShowing(){
 		return playerMenuShowed;
@@ -75,6 +82,7 @@ public class GameManager : MonoBehaviour {
 	private void HideBackgroundImage(){
 		BackgroundStoryImage.SetActive (false);
 		StopBackGroundMusic ();
+		dramaStory.enabled = false;
 		beginingAniFinished = true;
 		//Invoke ("HideturnIndicator", turnChangeDelay);
 	}
@@ -125,11 +133,7 @@ public class GameManager : MonoBehaviour {
 		turnIndicator.enabled = true;
 		Invoke ("HideturnIndicator", turnChangeDelay);
 	}
-
-	private void showTurnIndicator(string who){
-
-	}
-
+		
 	private void smaller(){
 		title.fontSize -=1;
 	}
@@ -164,11 +168,15 @@ public class GameManager : MonoBehaviour {
 		m_MyAudioSource.Stop ();
 	}
 
-
+	private void PlayEndTitleMusic(){
+		endMusic.Play ();
+	}
 
 	void InitGame(){
 
 		m_MyAudioSource = GameObject.Find("BackgroundMusic").GetComponent<AudioSource>();
+		endMusic = GameObject.Find("GameendTitle").GetComponent<AudioSource>();
+
 		doingSetup = true;
 		BackgroundStoryImage = GameObject.Find ("backGroundStory");
 		PlayerMenu = GameObject.Find ("playerMenu");
@@ -180,17 +188,28 @@ public class GameManager : MonoBehaviour {
 		turnIndicator = GameObject.Find ("turnIndicator").GetComponent<Text>();
 		turnText = GameObject.Find ("turnText").GetComponent<Text>();
 		gameOver = GameObject.Find ("gameOver").GetComponent<Text>();
+
 		Victory = GameObject.Find ("Victory").GetComponent<Text>();
 		story = GameObject.Find ("Story").GetComponent<Text>();
 		title = GameObject.Find ("Title").GetComponent<Text>();
+
+		endTitle = GameObject.Find ("endTitle").GetComponent<Text>();
+		MemoryOf = GameObject.Find ("MemoryOf").GetComponent<Text>();
+		Finaltitle =  GameObject.Find ("Finaltitle").GetComponent<Text>();
+
 		dramaStory = GameObject.Find ("dramaStory").GetComponent<Text>();
 		DiaLogImage = GameObject.Find ("dialogBox");
 		tutorialImage = GameObject.Find ("tutorial");
 
 
+
 		turnIndicator.enabled = false;
 		gameOver.enabled = false;
 		Victory.enabled = false;
+
+		endTitle.enabled = false;
+		MemoryOf.enabled = false;
+		Finaltitle.enabled = false;
 
 		DiaLogImage.SetActive (false);
 		tutorialImage.SetActive(false);
@@ -227,10 +246,14 @@ public class GameManager : MonoBehaviour {
 	void OperateEnemy(Enemy enemy){
 		//turnText.text = Convert.ToString(enemy.hasMoved);
 			if (!enemy.hasMoved) {
-				enemy.MoveEnemy ();
+				if(!timeplyMoved){
+					timeplyMoved = true;
+					enemy.MoveEnemy ();
+				}
 			}else {
 				enemy.EnemyAttack ();
 				busyEnemyIndex += 1;
+				timeplyMoved = false;
 			}
 
 	}
@@ -278,7 +301,41 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	private void gameQuit(){
+		Application.Quit ();
+	}
 
+	private void hideMemoryOf(){
+		MemoryOf.enabled = false;
+		Finaltitle.enabled = true;
+		Invoke ("gameQuit", 80f);
+	}
+
+	private void hideEndTitle(){
+		endTitle.enabled = false;
+		MemoryOf.enabled = true;
+		Invoke ("hideMemoryOf", 5f);
+	}
+
+	private void FinalThanksPlay(){
+
+		GameObject[] PlayerList  = GameObject.FindGameObjectsWithTag ("Player");
+		foreach (GameObject element in PlayerList) {
+			Destroy (element);
+		}
+
+		GameObject[] HpIndicatorInstances  = GameObject.FindGameObjectsWithTag ("HpIndicator");
+		print (HpIndicatorInstances);
+		foreach (GameObject element in HpIndicatorInstances) {
+			Destroy (element);
+		}
+
+
+		BackgroundStoryImage.SetActive (true);
+		PlayEndTitleMusic ();
+		endTitle.enabled = true;
+		Invoke ("hideEndTitle", 5f);
+	}
 
 	// Update is called once per frame
 	void Update () {
@@ -312,13 +369,27 @@ public class GameManager : MonoBehaviour {
 				OperateEnemy (enemies[i]);
 			}
 		}
-*/
+		*/
+
 		if (isAllPlayersdead()) {
 			gameOver.enabled = true;
+			Invoke ("gameQuit", 3.5f);
 			return;
 		}
 		if (isAllEnemiesdead()) {
+			victory = true;
+
+			GameObject[] HpIndicatorInstances  = GameObject.FindGameObjectsWithTag ("HpIndicator");
+			print (HpIndicatorInstances);
+			foreach (GameObject element in HpIndicatorInstances) {
+				Destroy (element);
+			}
+			print (HpIndicatorInstances);
 			Victory.enabled = true;
+			if(!FinalAniAlreadyPlayed){
+				FinalAniAlreadyPlayed = true;
+				Invoke ("FinalThanksPlay", 3.5f);
+			}
 			return;
 		}
 

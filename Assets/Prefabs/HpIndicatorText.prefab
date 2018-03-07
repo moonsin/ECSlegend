@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114521015880253694}
   m_Layer: 5
   m_Name: hpIndicatorText
-  m_TagString: Untagged
+  m_TagString: HpIndicator
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

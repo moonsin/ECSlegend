@@ -11,7 +11,6 @@ public class MoveButton : MonoBehaviour {
 	}
 
 	private void OnClick(){
-		print ("Button Clicked. ClickHandler.");
 		Player.buttonChoice = "move"; 
 	}
 		
