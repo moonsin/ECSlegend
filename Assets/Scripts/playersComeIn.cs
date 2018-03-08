@@ -19,7 +19,7 @@ public class playersComeIn: MonoBehaviour {
 
 	void Start(){
 		//47s
-		Invoke ("init", 47f);
+		//Invoke ("init", 47f);
 
 		//test code
 		//GameManager.instance.turnIndicator.enabled = true;
@@ -84,6 +84,8 @@ public class playersComeIn: MonoBehaviour {
 			GameManager.instance.DiaLogImage.SetActive (false);
 			GameManager.instance.turnIndicator.enabled = true;
 			Invoke ("HideturnIndicator", 1f);
+			TutorialManager tutorial = new TutorialManager();
+			tutorial.init ();
 		}
 	}
 }

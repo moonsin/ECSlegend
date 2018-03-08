@@ -120,16 +120,26 @@ public class Player : MovingObjects {
 			return ( h.name == "test(Clone)");
 	}
 
+
+
 	private bool IsMouseOnAttackRange(Vector3 mousePos){
-		print (mousePos); 
+		
 		mousePos.z = -0.5f;
 		Collider2D h = Physics2D.OverlapPoint (mousePos);
 
 		if (h == null) {
 			return false;
 		} else {
-			print (h.name == "attackRange(Clone)");
-			return(h.name == "attackRange(Clone)");
+			if (h.tag == "Enemy") {
+				GameObject[] attackRangesObjs = GameObject.FindGameObjectsWithTag ("attackRange");
+				for (int i = 0 ;i< attackRangesObjs.Length ; i++) {
+					if (h.transform.position == attackRangesObjs [i].transform.position) {
+						return true;
+					}
+				}
+				return false;
+			}
+			return((h.name == "attackRange(Clone)" ));
 		}
 	}
 
@@ -271,7 +281,7 @@ public class Player : MovingObjects {
 				movingToNum = bestPath.Count - 1;
 				moveRanges.Clear ();
 
-			} else if (Input.GetMouseButtonUp (0) && IsMouseOnAttackRange (clickPos)){
+			} else if (Input.GetMouseButtonUp (0) && IsMouseOnAttackRange (clickPos) && !GameManager.playerMenuShowed){
 				deleteAttackRange ();
 				if (isInEnemy (clickPos)) {
 					Collider2D h = Physics2D.OverlapPoint (clickPos);

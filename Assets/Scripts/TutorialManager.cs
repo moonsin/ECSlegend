@@ -30,7 +30,7 @@ public class TutorialManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		
-		Invoke ("init", 71.5f);
+		//Invoke ("init", 71.5f);
 
 		//test code
 		//GameManager.instance.turnIndicator.enabled = true;

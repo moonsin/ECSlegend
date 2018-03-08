@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour {
 	public Text Finaltitle;
 	private Text story;
 	private Text title;
+	public Text skipBackGroundStory;
 	private Button PlayerMenu_MoveButton;
 	private Button PlayerMenu_AttackButton;
 	private Button PlayerMenu_RestButton;
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour {
 	private TutorialManager tutorial;
 	private bool FinalAniAlreadyPlayed = false;
 	private bool timeplyMoved = false;
+	private bool hideskipBackGroundStoryisShowed = false;
 
 	public bool isMenuShowing(){
 		return playerMenuShowed;
@@ -83,8 +85,11 @@ public class GameManager : MonoBehaviour {
 		BackgroundStoryImage.SetActive (false);
 		StopBackGroundMusic ();
 		dramaStory.enabled = false;
+		if (!beginingAniFinished) {
+			this.GetComponent<playersComeIn> ().init ();
+		}
 		beginingAniFinished = true;
-		//Invoke ("HideturnIndicator", turnChangeDelay);
+
 	}
 
 	public void HideturnIndicator(){
@@ -142,21 +147,26 @@ public class GameManager : MonoBehaviour {
 		title.enabled = false;
 		dramaStory.enabled = true;
 		//boardScript.LayoutObjectAtRandom (boardScript.treeTiles,boardScript.treeCount.minimum, boardScript.treeCount.maximum);
+
 		Invoke ("HideBackgroundImage", 37f);
 	}
 
 	private void showTitle(){
 		story.enabled = false;
 		title.enabled = true;
+		PlayBackGroundMusic ();
 		Invoke ("showDramaStory", 8f);
 	}
 
 	private void InitBackGround(){
+		endTitle.enabled = false;
+		MemoryOf.enabled = false;
+		Finaltitle.enabled = false;
 		title.enabled = false;
 		dramaStory.enabled = false;
+		skipBackGroundStory.enabled = false;
 		BackgroundStoryImage.SetActive (true);
 		Invoke ("showTitle", backgroundStoryDelay);
-		Invoke ("PlayBackGroundMusic", backgroundStoryDelay);
 
 	}
 
@@ -196,6 +206,7 @@ public class GameManager : MonoBehaviour {
 		endTitle = GameObject.Find ("endTitle").GetComponent<Text>();
 		MemoryOf = GameObject.Find ("MemoryOf").GetComponent<Text>();
 		Finaltitle =  GameObject.Find ("Finaltitle").GetComponent<Text>();
+		skipBackGroundStory =  GameObject.Find ("skipBackGroundStory").GetComponent<Text>();
 
 		dramaStory = GameObject.Find ("dramaStory").GetComponent<Text>();
 		DiaLogImage = GameObject.Find ("dialogBox");
@@ -207,9 +218,7 @@ public class GameManager : MonoBehaviour {
 		gameOver.enabled = false;
 		Victory.enabled = false;
 
-		endTitle.enabled = false;
-		MemoryOf.enabled = false;
-		Finaltitle.enabled = false;
+
 
 		DiaLogImage.SetActive (false);
 		tutorialImage.SetActive(false);
@@ -337,14 +346,33 @@ public class GameManager : MonoBehaviour {
 		Invoke ("hideEndTitle", 5f);
 	}
 
+	private void hideskipBackGroundStory(){
+		skipBackGroundStory.enabled = false;
+		hideskipBackGroundStoryisShowed = false;
+	}
 	// Update is called once per frame
 	void Update () {
 
 		//turnText.text = Convert.ToString(busyEnemyIndex);
-			
+
+		if(!beginingAniFinished){
+			if (Input.anyKeyDown) {
+				skipBackGroundStory.enabled = true;
+				if(Input.GetKeyDown("space") && hideskipBackGroundStoryisShowed){
+					HideBackgroundImage ();
+				}
+				else {
+					hideskipBackGroundStoryisShowed = true;
+					Invoke ("hideskipBackGroundStory", 2.5f);
+				}
+
+			}
+		}
+
 		if (doingSetup) {
 			return;
 		}
+
 		if (IsPlayTurnFinish () && !enemyTurnShowed) {
 			turnIndicator.text = "Enemies' turn!";
 			showturnIndicator ();
@@ -363,13 +391,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
-		/*
-		if (IsPlayTurnFinish () && !IsEnemyTurnFinish ()) {
-			for (int i = 0; i < enemies.Count; i++) {
-				OperateEnemy (enemies[i]);
-			}
-		}
-		*/
+
 
 		if (isAllPlayersdead()) {
 			gameOver.enabled = true;
